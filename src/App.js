@@ -2,7 +2,7 @@ import { useState } from "react";
 import * as esprima from "esprima";
 import "./App.css";
 
-// Navbar Component
+// Navbar Component - Displays the application title
 const Navbar = () => (
     <nav>
         <div className="container">
@@ -11,7 +11,7 @@ const Navbar = () => (
     </nav>
 );
 
-// Footer Component
+// Footer Component - Displays copyright information
 const Footer = () => (
     <footer>
         <div className="container">
@@ -20,31 +20,43 @@ const Footer = () => (
     </footer>
 );
 
-// React Component
+// Main React Component - Handles the core functionality of the application
 export default function App() {
-    const [input, setInput] = useState("const x = 2 + 3; x * 4;");
-    const [tokens, setTokens] = useState([]);
-    const [ast, setAst] = useState(null);
-    const [result, setResult] = useState(null);
+    // State variables to store user input and parsing results
+    const [input, setInput] = useState("const x = 2 + 3; x * 4;"); // Default code snippet
+    const [tokens, setTokens] = useState([]); // Stores lexical tokens
+    const [ast, setAst] = useState(null); // Stores Abstract Syntax Tree
+    const [result, setResult] = useState(null); // Stores execution result
 
+    /**
+     * Handles the parsing of input JavaScript code
+     * 1. Tokenizes the input using esprima
+     * 2. Generates an Abstract Syntax Tree
+     * 3. Evaluates the code and displays the result
+     */
     const handleParse = () => {
         try {
-            // Tokenize input
+            // Tokenize input - breaks down code into lexical tokens
             const tokenized = esprima.tokenize(input, { loc: true });
             setTokens(tokenized);
 
-            // Generate AST
+            // Generate AST - create a structured representation of the code
             const parsedAst = esprima.parseScript(input);
             setAst(parsedAst);
 
-            // Evaluate (Using eval for simplicity - use safer alternatives in production)
+            // Evaluate code (Note: Using Function constructor for evaluation - safer than eval)
             const output = new Function("return " + input)();
             setResult(output);
         } catch (error) {
+            // Display error if parsing or execution fails
             setResult("Error: " + error.message);
         }
     };
 
+    /**
+     * Handles file uploads
+     * Reads the contents of a JavaScript file and updates the input state
+     */
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -54,6 +66,7 @@ export default function App() {
         }
     };
 
+    // Render the user interface
     return (
         <div className="min-h-screen flex flex-col">
             <Navbar />
@@ -63,6 +76,7 @@ export default function App() {
                         <h2>JavaScript Code Parser</h2>
                         
                         <div className="space-y-6">
+                            {/* Code input textarea */}
                             <div className="form-group">
                                 <label htmlFor="code-input">Enter JavaScript Code</label>
                                 <textarea
@@ -73,6 +87,7 @@ export default function App() {
                                 />
                             </div>
 
+                            {/* File upload section */}
                             <div className="form-group">
                                 <label>Or Upload a JavaScript File</label>
                                 <div className="file-upload">
@@ -87,11 +102,14 @@ export default function App() {
                                 </div>
                             </div>
 
+                            {/* Parse button */}
                             <button onClick={handleParse}>
                                 <span>Parse & Execute</span>
                             </button>
 
+                            {/* Results display section */}
                             <div className="output-section">
+                                {/* Tokens display */}
                                 <div className="form-group">
                                     <h3>Tokens</h3>
                                     <div className="output-box">
@@ -99,6 +117,7 @@ export default function App() {
                                     </div>
                                 </div>
 
+                                {/* AST display */}
                                 <div className="form-group">
                                     <h3>Abstract Syntax Tree (AST)</h3>
                                     <div className="output-box">
@@ -106,6 +125,7 @@ export default function App() {
                                     </div>
                                 </div>
 
+                                {/* Execution result display */}
                                 <div className="form-group">
                                     <h3>Execution Result</h3>
                                     <div className="output-box">
